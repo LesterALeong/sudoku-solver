@@ -1,5 +1,4 @@
 # [Sudoku Solver Freecodecamp Project](https://www.freecodecamp.org/learn/quality-assurance/quality-assurance-projects/sudoku-solver)
-![My preview](https://lh3.googleusercontent.com/2C5PPzqclDobaPnoNQZBhqV80Ws2exG6V0PT_IxTTrDzveKDzmDCcyT9TnTyVrGRUtGwt_s2bfsj1bLQqCR2UNdnN9UrHjYwx4fOuTqxQ1lI0oi8A-V3jQOkrfWzvdr5XDBPXHA2QQ=w2400)
 You can find my solution here: https://boilerplate-project-sudoku-solver.alevanni.repl.co/
 NOTE: the project is hosted on repl, and there can be necessity to start npm from the editor.
 
