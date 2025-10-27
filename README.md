@@ -1,6 +1,4 @@
 # [Sudoku Solver Freecodecamp Project](https://www.freecodecamp.org/learn/quality-assurance/quality-assurance-projects/sudoku-solver)
-You can find my solution here: https://boilerplate-project-sudoku-solver.alevanni.repl.co/
-NOTE: the project is hosted on repl, and there can be necessity to start npm from the editor.
 
 - All puzzle logic can go into /controllers/sudoku-solver.js
      - The validate function should take a given puzzle string and check it to see if it has 81 valid characters for the input.
