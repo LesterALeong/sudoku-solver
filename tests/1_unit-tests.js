@@ -1,126 +1,113 @@
-const chai = require('chai');
+const chai = require("chai");
 const assert = chai.assert;
 
-const Solver = require('../controllers/sudoku-solver.js');
+const Solver = require("../controllers/sudoku-solver.js");
 let solver = new Solver();
 
-suite('UnitTests', () => {
-   console.log("test1");
-   suite("Function sudokuSolver.validate(puzzleString)", function() {
-     //console.log("test2");
-     test("Valid String", function(done){
-        //console.log("test3");
-        let puzzleString = '1.5..2.84..63.12.7.2..5.....9..1....8.2.3674.3.7.2..9.47...8..1..16....926914.37.';
-        assert.equal(solver.validate(puzzleString), "ok");
-        
-        done();
-     });
-    test("Invalid characters in string", function(done){
-        
-        let puzzleString = '1.5..2.84..6A.12.7.2..5.....9..1....8.2.3674.3.7.2..9.47...8..1..16....926914.37.';
-        var valid = solver.validate(puzzleString);
-        assert.property(valid, "error");
-        assert.equal(valid.error, "Invalid characters in puzzle");
-        
-        done();
-     });
-    test("Invalid string length", function(done){
-        
-        let puzzleString = '1.5..2.84..63.12.7..2..5.....9..1....8.2.3674.3.7.2..9.47...8..1..16....926914.37...';
-        var valid = solver.validate(puzzleString);
-        assert.property(valid, "error");
-        assert.equal(valid.error, "Expected puzzle to be 81 characters long");
-        
-        done();
-     });
-   });
+const testStrings = require("../controllers/puzzle-strings")
+  .puzzlesAndSolutions;
 
-   suite("Function sudokuSolver.checkRowPlacement(puzzleString, row, column, value)", function(){
-       test("Invalid row placement", function(done){
-        
-        let puzzleString = '1.5..2.84..63.12.7.2..5.....9..1....8.2.3674.3.7.2..9.47...8..1..16....926914.37.';
-        var valid = solver.checkRowPlacement(puzzleString, "A", "1", "5");
-        
-        assert.equal(valid, false);
-        
-        done();
-     });
-     test("Valid row placement", function(done){
-        
-        let puzzleString = '1.5..2.84..63.12.7.2..5.....9..1....8.2.3674.3.7.2..9.47...8..1..16....926914.37.';
-        var valid = solver.checkRowPlacement(puzzleString, "A", "2", "3");
-        
-        assert.equal(valid, true);
-        
-        done();
-     });
-   });
+suite("UnitTests", () => {
+  test("Valid puzzle of 81 characters", (done) => {
+    const puzzle = testStrings[0][0];
+    assert.lengthOf(puzzle, 81);
+    assert.isNotFalse(solver.validate(puzzle)[0]);
+    done();
+  });
 
-   suite("Function sudokuSolver.checkColPlacement(puzzleString, row, column, value)", function(){
-       test("Invalid column placement", function(done){
-        
-        let puzzleString = '1.5..2.84..63.12.7.2..5.....9..1....8.2.3674.3.7.2..9.47...8..1..16....926914.37.';
-        var valid = solver.checkColPlacement(puzzleString, "A", "1", "6");
-        
-        assert.equal(valid, false);
-        
-        done();
-     });
-     test("Valid column placement", function(done){
-        
-        let puzzleString = '1.5..2.84..63.12.7.2..5.....9..1....8.2.3674.3.7.2..9.47...8..1..16....926914.37.';
-        var valid = solver.checkColPlacement(puzzleString, "G", "7", "6");
-        
-        assert.equal(valid, true);
-        
-        done();
-     });
-   });
-   suite("Function sudokuSolver.checkRegionPlacement(puzzleString, row, column, value)", function(){
-      test("Invalid region placement", function(done){
-        
-        let puzzleString = '1.5..2.84..63.12.7.2..5.....9..1....8.2.3674.3.7.2..9.47...8..1..16....926914.37.';
-        var valid = solver.checkRegionPlacement(puzzleString, "D", "4", "6");
-        
-        assert.equal(valid, false);
-        
-        done();
-     });
-     test("Valid region placement", function(done){
-        
-        let puzzleString = '1.5..2.84..63.12.7.2..5.....9..1....8.2.3674.3.7.2..9.47...8..1..16....926914.37.';
-        var valid = solver.checkRegionPlacement(puzzleString, "F", "2", "1");
-        
-        assert.equal(valid, true);
-        
-        done();
-     });
-   });
-  suite("Function sudokuSolver.solve(puzzleString)", function(){
-      test("A valid string passes the solver", function(done){
-        let puzzleString ='.7.89.....5....3.4.2..4..1.5689..472...6.....1.7.5.63873.1.2.8.6..47.1..2.9.387.6';
-        let solution = '473891265851726394926345817568913472342687951197254638734162589685479123219538746';
-        var sol = solver.solve(puzzleString);
-        assert.hasOwnProperty(sol, "solution");
-        assert.equal(sol.solution, solution);
-        done();
-       })
+  test("Puzzle with invalid characters", (done) => {
+    const puzzle = testStrings[0][0].replace(".", "#");
+    assert.isFalse(solver.validate(puzzle)[0]);
+    assert.deepEqual(solver.validate(puzzle)[1], {
+      error: "Invalid characters in puzzle"
+    });
+    done();
+  });
 
-       test("An invalid string fails the solver", function(done){
-        let puzzleString ='57.892.....5....3.4.2..4..1.5689..472...6.....1.7.5.63873.1.2.8.6..47.1..2.9.387.';
-        
-        var sol = solver.solve(puzzleString);
-        assert.hasOwnProperty(sol, "error");
-        assert.equal(sol.error, "Puzzle cannot be solved");
-        done();
-       });
-       test("The solver returns a solution for an incomplete puzzle", function(done){
-        let puzzleString ='123..............................................................................';
-        var solution = "123456789456789123789123456214365897365897214897214365531642978642978531978531642"
-        var sol = solver.solve(puzzleString);
-        assert.hasOwnProperty(sol, "solution");
-        assert.equal(sol.solution, solution);
-        done();
-       })
-   });
+  test("Puzzle that is not 81 characters long", (done) => {
+    const puzzle = testStrings[0][0].replace(".", "");
+    assert.lengthOf(puzzle, 80);
+    assert.isFalse(solver.validate(puzzle)[0]);
+    assert.deepEqual(solver.validate(puzzle)[1], {
+      error: "Expected puzzle to be 81 characters long"
+    });
+    done();
+  });
+
+  test("Puzzle with valid row placement", (done) => {
+    const puzzle = solver.validate(testStrings[5][0])[1],
+      row = "a",
+      col = 1,
+      value = 3;
+    assert.isTrue(solver.checkRow(puzzle, row, col, value));
+    done();
+  });
+
+  test("Puzzle with invalid row placement", (done) => {
+    const puzzle = solver.validate(testStrings[5][0])[1],
+      row = "C",
+      col = 5,
+      value = 3;
+    assert.equal(solver.checkRow(puzzle, row, col, value), "row");
+    done();
+  });
+
+  test("Puzzle with valid column placement", (done) => {
+    const puzzle = solver.validate(testStrings[5][0])[1],
+      row = "i",
+      col = 9,
+      value = 1;
+    assert.isTrue(solver.checkCol(puzzle, row, col, value));
+    done();
+  });
+
+  test("Puzzle with invalid column placement", (done) => {
+    const puzzle = solver.validate(testStrings[5][0])[1],
+      row = "H",
+      col = 2,
+      value = 5;
+    assert.equal(solver.checkCol(puzzle, row, col, value), "column");
+    done();
+  });
+
+  test("Puzzle with valid region placement", (done) => {
+    const puzzle = solver.validate(testStrings[5][0])[1],
+      row = "b",
+      col = 1,
+      value = 8;
+    assert.isTrue(solver.checkReg(puzzle, row, col, value));
+    done();
+  });
+
+  test("Puzzle with invalid region placement", (done) => {
+    const puzzle = solver.validate(testStrings[5][0])[1],
+      row = "C",
+      col = 9,
+      value = 2;
+    assert.equal(solver.checkReg(puzzle, row, col, value), "region");
+    done();
+  });
+
+  test("Valid puzzles pass the solver", (done) => {
+    const incompletePuzzle = testStrings[0][0],
+      completePuzzle = testStrings[0][1],
+      validatedPuzzle = solver.validate(incompletePuzzle)[1];
+    assert.equal(solver.solve(validatedPuzzle), completePuzzle);
+    done();
+  });
+
+  test("Invalid puzzles fail the solver", (done) => {
+    const invalidPuzzle = testStrings[0][0].replace(".", "1"),
+      validatedPuzzle = solver.validate(invalidPuzzle)[1];
+    assert.isFalse(solver.solve(validatedPuzzle));
+    done();
+  });
+
+  test("Sovler returns the expected solution for an incomplete puzzle", (done) => {
+    const incompletePuzzle = testStrings[1][0],
+      completedPuzzle = testStrings[1][1],
+      validatedPuzzle = solver.validate(incompletePuzzle)[1];
+    assert.equal(solver.solve(validatedPuzzle), completedPuzzle);
+    done();
+  });
 });
